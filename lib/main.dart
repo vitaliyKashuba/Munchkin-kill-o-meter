@@ -1,7 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:english_words/english_words.dart';
+import 'package:flutter/rendering.dart';
+import 'package:swipedetector/swipedetector.dart';
 
-void main() => runApp(MyApp());
+void main() {
+//  debugPaintSizeEnabled=true;
+  runApp(MyApp());
+}
+
+enum Action {
+  INCREASE, DECREASE
+}
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
@@ -29,7 +38,135 @@ class MyApp extends StatelessWidget {
       theme: new ThemeData(          // Add the 3 lines from here...
         primaryColor: Colors.white,
       ),
-        home: RandomWords(),
+        home: MyStatefulWidget(),
+    );
+  }
+}
+
+class MyState extends State<MyStatefulWidget> {
+  String abc = "bb";
+
+  int total = 0;
+
+  callback(Action action) {
+    setState(() {
+      switch(action)
+      {
+        case Action.INCREASE:
+          total++;
+          break;
+        case Action.DECREASE:
+          total--;
+          break;
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Startup Name Generator'),
+      ),
+      body: _buildBody(),
+    );
+  }
+
+  Widget _buildBody() {
+//    return Text('hello world1');
+    return Container(
+      padding: EdgeInsets.all(20.0),
+      child: Column (
+//        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          Row(
+            children: [
+              Text("$total"),
+            ]
+          ),
+          Row(
+            children: [
+              CounterCell(callback),
+              CounterCell(callback),
+              CounterCell(callback),
+            ],
+          ),
+          Row(
+            children: [
+              CounterCell(callback),
+            ],
+          ),
+          Row(
+            children: [
+              CounterCell(callback),
+            ],
+          )
+        ],
+      ),
+    );
+  }
+}
+
+class MyStatefulWidget extends StatefulWidget
+{
+  @override
+  MyState createState() => new MyState();
+}
+
+class CounterCell extends StatefulWidget {
+  Function(Action) callback;
+
+  CounterCell(this.callback);
+
+
+  @override
+  State<StatefulWidget> createState() => new CounterCellState();
+}
+
+class CounterCellState extends State<CounterCell>
+{
+  bool _active = false;
+  int _point = 0;
+  void _handleTap() {
+    setState(() {
+      widget.callback(Action.INCREASE); //call to parent
+      print('tap');
+      _point++;
+      _active = !_active;
+    });
+  }
+
+  void _handleDoubleTap()
+  {
+    setState(() {
+      widget.callback(Action.DECREASE);
+      print('dtap');
+      _point--;
+      _active = !_active;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: _handleTap,
+      onDoubleTap: _handleDoubleTap,
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Container(
+          child: Center(
+            child: Text(
+              '$_point',
+              style: TextStyle(fontSize: 16.0, color: Colors.white),
+            ),
+          ),
+          width: 100,
+          height: 100,
+          decoration: BoxDecoration(
+            color: _active ? Colors.lightGreen[700] : Colors.grey[600],
+          ),
+        ),
+      )
     );
   }
 }
@@ -125,6 +262,7 @@ class RandomWords extends StatefulWidget {
   @override
   RandomWordsState createState() => new RandomWordsState();
 }
+
 
 //class MyHomePage extends StatefulWidget {
 //  MyHomePage({Key key, this.title}) : super(key: key);
