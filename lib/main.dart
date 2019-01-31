@@ -117,13 +117,15 @@ class MainWidgetState extends State<MainWidget> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-//              CounterCell(callback),
+              BasicSquareCell(),
               CounterCell(callback),
-              FloatingActionButton(
-                onPressed: () {
-                  print("pressed");
-                },
-                child: Icon(MyFlutterApp.skull_n_bones),
+              BasicSquareCell(
+                child: FloatingActionButton(
+                  onPressed: () {
+                    print("pressed");
+                  },
+                  child: Icon(MyFlutterApp.skull_n_bones),
+                ),
               )
             ],
           )
@@ -193,15 +195,37 @@ class CounterCellState extends State<CounterCell> {
 }
 
 class BasicSquareCell extends StatefulWidget {
+  Widget child;
+  Function() onTap, onDoubleTap, onLongTap;
+
+  BasicSquareCell({this.child, this.onTap, this.onDoubleTap, this.onLongTap}) {}
+
   @override
-  State<StatefulWidget> createState() => new CounterCellState();
+  State<StatefulWidget> createState() => new BasicSquareCellState(child: child, onTap: onTap, onDoubleTap: onDoubleTap, onLongTap: onLongTap);
 }
 
 class BasicSquareCellState extends State<BasicSquareCell> {
+  Widget child;
+  Function() onTap, onDoubleTap, onLongTap;
+
+  BasicSquareCellState({this.child, this.onTap, this.onDoubleTap, this.onLongTap}) { }
+
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
-    return null;
+    return InkWell(
+      highlightColor: Colors.deepOrangeAccent[200],
+        onTap: onTap,
+        onDoubleTap: onDoubleTap,
+        onLongPress: onLongTap,
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Ink(
+              width: 100,
+              height: 100,
+              color: Colors.deepOrange[200],
+              child: this.child == null ? Container() : this.child
+          ),
+        ));
   }
 }
 
