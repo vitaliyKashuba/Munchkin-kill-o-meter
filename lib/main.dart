@@ -9,7 +9,7 @@ void main() {
 }
 
 enum Action {
-  INCREASE, DECREASE
+  INCREASE, DECREASE, TO_ZERO
 }
 
 class MyApp extends StatelessWidget {
@@ -36,19 +36,26 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
         title: 'Startup Name Generator',
       theme: new ThemeData(          // Add the 3 lines from here...
-        primaryColor: Colors.white,
+        primaryColor: Colors.deepOrange,
+        accentColor: Colors.deepOrangeAccent,
+        highlightColor: Colors.deepOrangeAccent[200],
+//        backgroundColor: Colors.deepOrangeAccent[100]
       ),
-        home: MyStatefulWidget(),
+        home: MainWidget(),
     );
   }
 }
 
-class MyState extends State<MyStatefulWidget> {
-  String abc = "bb";
+class MainWidget extends StatefulWidget
+{
+  @override
+  MainWidgetState createState() => new MainWidgetState();
+}
 
+class MainWidgetState extends State<MainWidget> {
   int total = 0;
 
-  callback(Action action) {
+  callback(Action action, [int decreaseValue]) {      // TODO add some validation on optional parameters ?
     setState(() {
       switch(action)
       {
@@ -57,6 +64,9 @@ class MyState extends State<MyStatefulWidget> {
           break;
         case Action.DECREASE:
           total--;
+          break;
+        case Action.TO_ZERO:
+          total = total-decreaseValue;
           break;
       }
     });
@@ -75,16 +85,31 @@ class MyState extends State<MyStatefulWidget> {
   Widget _buildBody() {
 //    return Text('hello world1');
     return Container(
+      color: Colors.deepOrange[100],
       padding: EdgeInsets.all(20.0),
       child: Column (
 //        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          Row(
-            children: [
-              Text("$total"),
-            ]
+          Center(
+              child: Card(
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 50, top: 25, right: 50, bottom: 25),
+                    child: Text("$total"),
+                  )
+              )
           ),
           Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              RaisedButton(onPressed: () {},
+              color: Colors.deepOrange,),
+//              CounterCell(callback),
+              CounterCell(callback),
+              CounterCell(callback),
+            ],
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               CounterCell(callback),
               CounterCell(callback),
@@ -92,11 +117,7 @@ class MyState extends State<MyStatefulWidget> {
             ],
           ),
           Row(
-            children: [
-              CounterCell(callback),
-            ],
-          ),
-          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               CounterCell(callback),
             ],
@@ -107,14 +128,9 @@ class MyState extends State<MyStatefulWidget> {
   }
 }
 
-class MyStatefulWidget extends StatefulWidget
-{
-  @override
-  MyState createState() => new MyState();
-}
-
 class CounterCell extends StatefulWidget {
-  Function(Action) callback;
+  Function(Action, [int]) callback;
+//  final snackBar = SnackBar(content: Text('Yay! A SnackBar!')); //Scaffold.of(context).showSnackBar(snackBar);
 
   CounterCell(this.callback);
 
@@ -125,14 +141,12 @@ class CounterCell extends StatefulWidget {
 
 class CounterCellState extends State<CounterCell>
 {
-  bool _active = false;
   int _point = 0;
   void _handleTap() {
     setState(() {
       widget.callback(Action.INCREASE); //call to parent
       print('tap');
       _point++;
-      _active = !_active;
     });
   }
 
@@ -142,18 +156,29 @@ class CounterCellState extends State<CounterCell>
       widget.callback(Action.DECREASE);
       print('dtap');
       _point--;
-      _active = !_active;
+    });
+  }
+
+  void _handleLongTap()
+  {
+    setState(() {
+      widget.callback(Action.TO_ZERO, _point);
+      print('longtap');
+      _point = 0;
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
+    return InkWell(
+//      highlightColor: Colors.deepOrangeAccent[200],
       onTap: _handleTap,
       onDoubleTap: _handleDoubleTap,
+      onLongPress: _handleLongTap,
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Container(
+          color: Colors.deepOrange,
           child: Center(
             child: Text(
               '$_point',
@@ -162,9 +187,10 @@ class CounterCellState extends State<CounterCell>
           ),
           width: 100,
           height: 100,
-          decoration: BoxDecoration(
-            color: _active ? Colors.lightGreen[700] : Colors.grey[600],
-          ),
+//          decoration: BoxDecoration(
+////            color: _active ? Colors.lightGreen[700] : Colors.grey[600],
+//            color: Colors.deepOrangeAccent
+//          ),
         ),
       )
     );
