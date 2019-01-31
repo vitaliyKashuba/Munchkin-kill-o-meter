@@ -84,7 +84,7 @@ class MainWidgetState extends State<MainWidget> {
 
   Widget _buildBody() {
 //    return Text('hello world1');
-    return Container(
+    return Ink(
       color: Colors.deepOrange[100],
       padding: EdgeInsets.all(20.0),
       child: Column (
@@ -101,9 +101,9 @@ class MainWidgetState extends State<MainWidget> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              RaisedButton(onPressed: () {},
-              color: Colors.deepOrange,),
-//              CounterCell(callback),
+//              RaisedButton(onPressed: () {},
+//              color: Colors.deepOrange,),
+              CounterCell(callback),
               CounterCell(callback),
               CounterCell(callback),
             ],
@@ -177,20 +177,16 @@ class CounterCellState extends State<CounterCell>
       onLongPress: _handleLongTap,
       child: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: Container(
-          color: Colors.deepOrange,
-          child: Center(
-            child: Text(
-              '$_point',
-              style: TextStyle(fontSize: 16.0, color: Colors.white),
-            ),
-          ),
+        child: Ink(
           width: 100,
           height: 100,
-//          decoration: BoxDecoration(
-////            color: _active ? Colors.lightGreen[700] : Colors.grey[600],
-//            color: Colors.deepOrangeAccent
-//          ),
+          color: Colors.deepOrange,
+            child:Center(
+              child: Text(
+                '$_point',
+                style: TextStyle(fontSize: 16.0, color: Colors.white),
+              ),
+            )
         ),
       )
     );
