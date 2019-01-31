@@ -3,14 +3,14 @@ import 'package:english_words/english_words.dart';
 import 'package:flutter/rendering.dart';
 import 'package:swipedetector/swipedetector.dart';
 
+import './presentation/my_flutter_app_icons.dart';
+
 void main() {
 //  debugPaintSizeEnabled=true;
   runApp(MyApp());
 }
 
-enum Action {
-  INCREASE, DECREASE, TO_ZERO
-}
+enum Action { INCREASE, DECREASE, TO_ZERO }
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
@@ -34,20 +34,19 @@ class MyApp extends StatelessWidget {
 //    );
 
     return MaterialApp(
-        title: 'Startup Name Generator',
-      theme: new ThemeData(          // Add the 3 lines from here...
-        primaryColor: Colors.deepOrange,
+      title: 'Munchkin kill-o-meter',
+      theme: new ThemeData(
+        primaryColor: Colors.deepOrange[600],
         accentColor: Colors.deepOrangeAccent,
         highlightColor: Colors.deepOrangeAccent[200],
 //        backgroundColor: Colors.deepOrangeAccent[100]
       ),
-        home: MainWidget(),
+      home: MainWidget(),
     );
   }
 }
 
-class MainWidget extends StatefulWidget
-{
+class MainWidget extends StatefulWidget {
   @override
   MainWidgetState createState() => new MainWidgetState();
 }
@@ -55,10 +54,10 @@ class MainWidget extends StatefulWidget
 class MainWidgetState extends State<MainWidget> {
   int total = 0;
 
-  callback(Action action, [int decreaseValue]) {      // TODO add some validation on optional parameters ?
+  callback(Action action, [int decreaseValue]) {
+    // TODO add some validation on optional parameters ?
     setState(() {
-      switch(action)
-      {
+      switch (action) {
         case Action.INCREASE:
           total++;
           break;
@@ -66,7 +65,7 @@ class MainWidgetState extends State<MainWidget> {
           total--;
           break;
         case Action.TO_ZERO:
-          total = total-decreaseValue;
+          total = total - decreaseValue;
           break;
       }
     });
@@ -87,17 +86,16 @@ class MainWidgetState extends State<MainWidget> {
     return Ink(
       color: Colors.deepOrange[100],
       padding: EdgeInsets.all(20.0),
-      child: Column (
+      child: Column(
 //        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           Center(
               child: Card(
                   child: Padding(
-                    padding: const EdgeInsets.only(left: 50, top: 25, right: 50, bottom: 25),
-                    child: Text("$total"),
-                  )
-              )
-          ),
+            padding:
+                const EdgeInsets.only(left: 50, top: 25, right: 50, bottom: 25),
+            child: Text("$total"),
+          ))),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -119,7 +117,14 @@ class MainWidgetState extends State<MainWidget> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+//              CounterCell(callback),
               CounterCell(callback),
+              FloatingActionButton(
+                onPressed: () {
+                  print("pressed");
+                },
+                child: Icon(MyFlutterApp.skull_n_bones),
+              )
             ],
           )
         ],
@@ -134,13 +139,11 @@ class CounterCell extends StatefulWidget {
 
   CounterCell(this.callback);
 
-
   @override
   State<StatefulWidget> createState() => new CounterCellState();
 }
 
-class CounterCellState extends State<CounterCell>
-{
+class CounterCellState extends State<CounterCell> {
   int _point = 0;
   void _handleTap() {
     setState(() {
@@ -150,8 +153,7 @@ class CounterCellState extends State<CounterCell>
     });
   }
 
-  void _handleDoubleTap()
-  {
+  void _handleDoubleTap() {
     setState(() {
       widget.callback(Action.DECREASE);
       print('dtap');
@@ -159,8 +161,7 @@ class CounterCellState extends State<CounterCell>
     });
   }
 
-  void _handleLongTap()
-  {
+  void _handleLongTap() {
     setState(() {
       widget.callback(Action.TO_ZERO, _point);
       print('longtap');
@@ -172,119 +173,130 @@ class CounterCellState extends State<CounterCell>
   Widget build(BuildContext context) {
     return InkWell(
 //      highlightColor: Colors.deepOrangeAccent[200],
-      onTap: _handleTap,
-      onDoubleTap: _handleDoubleTap,
-      onLongPress: _handleLongTap,
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Ink(
-          width: 100,
-          height: 100,
-          color: Colors.deepOrange,
-            child:Center(
-              child: Text(
-                '$_point',
-                style: TextStyle(fontSize: 16.0, color: Colors.white),
-              ),
-            )
-        ),
-      )
-    );
+        onTap: _handleTap,
+        onDoubleTap: _handleDoubleTap,
+        onLongPress: _handleLongTap,
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Ink(
+              width: 100,
+              height: 100,
+              color: Colors.deepOrange[500],
+              child: Center(
+                child: Text(
+                  '$_point',
+                  style: TextStyle(fontSize: 16.0, color: Colors.white),
+                ),
+              )),
+        ));
   }
 }
 
-class RandomWordsState extends State<RandomWords> {
-  final _suggestions = <WordPair>[];
-  final _biggerFont = const TextStyle(fontSize: 18.0);
-  final Set<WordPair> _saved = new Set<WordPair>();   // Add this line.
+class BasicSquareCell extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() => new CounterCellState();
+}
 
+class BasicSquareCellState extends State<BasicSquareCell> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Startup Name Generator'),
-        actions: <Widget>[      // Add 3 lines from here...
-          new IconButton(icon: const Icon(Icons.list), onPressed: _pushSaved),
-        ],
-      ),
-      body: _buildSuggestions(),
-    );
-  }
-
-  Widget _buildSuggestions() {
-    return ListView.builder(
-        padding: const EdgeInsets.all(16.0),
-        itemBuilder: /*1*/ (context, i) {
-          if (i.isOdd) return Divider(); /*2*/
-
-          final index = i ~/ 2; /*3*/
-          if (index >= _suggestions.length) {
-            _suggestions.addAll(generateWordPairs().take(10)); /*4*/
-          }
-          return _buildRow(_suggestions[index]);
-        });
-  }
-
-  Widget _buildRow(WordPair pair) {
-    final bool alreadySaved = _saved.contains(pair);  // Add this line.
-    return ListTile(
-      title: Text(
-        pair.asPascalCase,
-        style: _biggerFont,
-      ),
-      trailing: new Icon(   // Add the lines from here...
-        alreadySaved ? Icons.favorite : Icons.favorite_border,
-        color: alreadySaved ? Colors.red : null,
-      ),
-      onTap: () {      // Add 9 lines from here...
-        setState(() {
-          if (alreadySaved) {
-            _saved.remove(pair);
-          } else {
-            _saved.add(pair);
-          }
-        });
-      },
-    );
-  }
-
-  void _pushSaved() {
-    Navigator.of(context).push(
-      new MaterialPageRoute<void>(   // Add 20 lines from here...
-        builder: (BuildContext context) {
-          final Iterable<ListTile> tiles = _saved.map(
-                (WordPair pair) {
-              return new ListTile(
-                title: new Text(
-                  pair.asPascalCase,
-                  style: _biggerFont,
-                ),
-              );
-            },
-          );
-          final List<Widget> divided = ListTile
-              .divideTiles(
-            context: context,
-            tiles: tiles,
-          )
-              .toList();
-          return new Scaffold(         // Add 6 lines from here...
-            appBar: new AppBar(
-              title: const Text('Saved Suggestions'),
-            ),
-            body: new ListView(children: divided),
-          );
-        },
-      ),                           // ... to here.
-    );
+    // TODO: implement build
+    return null;
   }
 }
 
-class RandomWords extends StatefulWidget {
-  @override
-  RandomWordsState createState() => new RandomWordsState();
-}
-
+//class RandomWordsState extends State<RandomWords> {
+//  final _suggestions = <WordPair>[];
+//  final _biggerFont = const TextStyle(fontSize: 18.0);
+//  final Set<WordPair> _saved = new Set<WordPair>();   // Add this line.
+//
+//  @override
+//  Widget build(BuildContext context) {
+//    return Scaffold(
+//      appBar: AppBar(
+//        title: Text('Startup Name Generator'),
+//        actions: <Widget>[      // Add 3 lines from here...
+//          new IconButton(icon: const Icon(Icons.list), onPressed: _pushSaved),
+//        ],
+//      ),
+//      body: _buildSuggestions(),
+//    );
+//  }
+//
+//  Widget _buildSuggestions() {
+//    return ListView.builder(
+//        padding: const EdgeInsets.all(16.0),
+//        itemBuilder: /*1*/ (context, i) {
+//          if (i.isOdd) return Divider(); /*2*/
+//
+//          final index = i ~/ 2; /*3*/
+//          if (index >= _suggestions.length) {
+//            _suggestions.addAll(generateWordPairs().take(10)); /*4*/
+//          }
+//          return _buildRow(_suggestions[index]);
+//        });
+//  }
+//
+//  Widget _buildRow(WordPair pair) {
+//    final bool alreadySaved = _saved.contains(pair);  // Add this line.
+//    return ListTile(
+//      title: Text(
+//        pair.asPascalCase,
+//        style: _biggerFont,
+//      ),
+//      trailing: new Icon(   // Add the lines from here...
+//        alreadySaved ? Icons.favorite : Icons.favorite_border,
+//        color: alreadySaved ? Colors.red : null,
+//      ),
+//      onTap: () {      // Add 9 lines from here...
+//        setState(() {
+//          if (alreadySaved) {
+//            _saved.remove(pair);
+//          } else {
+//            _saved.add(pair);
+//          }
+//        });
+//      },
+//    );
+//  }
+//
+//  void _pushSaved() {
+//    Navigator.of(context).push(
+//      new MaterialPageRoute<void>(   // Add 20 lines from here...
+//        builder: (BuildContext context) {
+//          final Iterable<ListTile> tiles = _saved.map(
+//                (WordPair pair) {
+//              return new ListTile(
+//                title: new Text(
+//                  pair.asPascalCase,
+//                  style: _biggerFont,
+//                ),
+//              );
+//            },
+//          );
+//          final List<Widget> divided = ListTile
+//              .divideTiles(
+//            context: context,
+//            tiles: tiles,
+//          )
+//              .toList();
+//          return new Scaffold(         // Add 6 lines from here...
+//            appBar: new AppBar(
+//              title: const Text('Saved Suggestions'),
+//            ),
+//            body: new ListView(children: divided),
+//          );
+//        },
+//      ),                           // ... to here.
+//    );
+//  }
+//}
+//
+//class RandomWords extends StatefulWidget {
+//  @override
+//  RandomWordsState createState() => new RandomWordsState();
+//}
+//
 
 //class MyHomePage extends StatefulWidget {
 //  MyHomePage({Key key, this.title}) : super(key: key);
