@@ -75,7 +75,7 @@ class MainWidgetState extends State<MainWidget> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Startup Name Generator'),
+        title: Text('Munchkin kill-o-meter'),
       ),
       body: _buildBody(),
     );
@@ -147,83 +147,101 @@ class CounterCell extends StatefulWidget {
 
 class CounterCellState extends State<CounterCell> {
   int _point = 0;
-  void _handleTap() {
+  void handleTap() {
     setState(() {
+//      print(_point);
+//      print(widget);
       widget.callback(Action.INCREASE); //call to parent
-      print('tap');
+//      print('tap');
       _point++;
     });
   }
 
-  void _handleDoubleTap() {
+  void handleDoubleTap() {
     setState(() {
       widget.callback(Action.DECREASE);
-      print('dtap');
+//      print('dtap');
       _point--;
     });
   }
 
-  void _handleLongTap() {
+  void handleLongTap() {
     setState(() {
       widget.callback(Action.TO_ZERO, _point);
-      print('longtap');
+//      print('longtap');
+//      print(_point);
       _point = 0;
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-//      highlightColor: Colors.deepOrangeAccent[200],
-        onTap: _handleTap,
-        onDoubleTap: _handleDoubleTap,
-        onLongPress: _handleLongTap,
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Ink(
-              width: 100,
-              height: 100,
-              color: Colors.deepOrange[500],
-              child: Center(
+//    return InkWell(
+////      highlightColor: Colors.deepOrangeAccent[200],
+//        onTap: _handleTap,
+//        onDoubleTap: _handleDoubleTap,
+//        onLongPress: _handleLongTap,
+//        child: Padding(
+//          padding: const EdgeInsets.all(8.0),
+//          child: Ink(
+//              width: 100,
+//              height: 100,
+//              color: Colors.deepOrange[500],
+//              child: Center(
+//                child: Text(
+//                  '$_point',
+//                  style: TextStyle(fontSize: 16.0, color: Colors.white),
+//                ),
+//              )),
+//        ));
+      return BasicSquareCell(
+        onTap: handleTap,
+        onDoubleTap: handleDoubleTap,
+        onLongTap: handleLongTap,
+        color: Colors.deepOrange[400],
+        child: Center(
                 child: Text(
                   '$_point',
                   style: TextStyle(fontSize: 16.0, color: Colors.white),
                 ),
-              )),
-        ));
+              )
+      );
   }
 }
 
 class BasicSquareCell extends StatefulWidget {
-  Widget child;
-  Function() onTap, onDoubleTap, onLongTap;
+  final Widget child;
+  final Function() onTap, onDoubleTap, onLongTap;
+  final Color color;
 
-  BasicSquareCell({this.child, this.onTap, this.onDoubleTap, this.onLongTap}) {}
+  BasicSquareCell({this.child, this.onTap, this.onDoubleTap, this.onLongTap, this.color}) {}
 
   @override
-  State<StatefulWidget> createState() => new BasicSquareCellState(child: child, onTap: onTap, onDoubleTap: onDoubleTap, onLongTap: onLongTap);
+  State<StatefulWidget> createState() => new BasicSquareCellState();
 }
 
 class BasicSquareCellState extends State<BasicSquareCell> {
-  Widget child;
-  Function() onTap, onDoubleTap, onLongTap;
 
-  BasicSquareCellState({this.child, this.onTap, this.onDoubleTap, this.onLongTap}) { }
+  void handleLongTap() {
+    setState(() {
+      print(widget);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
       highlightColor: Colors.deepOrangeAccent[200],
-        onTap: onTap,
-        onDoubleTap: onDoubleTap,
-        onLongPress: onLongTap,
+        onTap: widget.onTap,
+        onDoubleTap: widget.onDoubleTap,
+        onLongPress: widget.onLongTap,
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Ink(
-              width: 100,
-              height: 100,
-              color: Colors.deepOrange[200],
-              child: this.child == null ? Container() : this.child
+              width: 80,
+              height: 80,
+              color: widget.color,
+              child: widget.child == null ? Container() : widget.child
           ),
         ));
   }
