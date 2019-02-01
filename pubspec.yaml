@@ -21,6 +21,7 @@ dependencies:
   cupertino_icons: ^0.1.2
   english_words: ^3.1.0
   swipedetector: ^1.2.0
+  badges: ^0.0.6
 
 dev_dependencies:
   flutter_test:
@@ -39,9 +40,9 @@ flutter:
   uses-material-design: true
 
   fonts:
-   - family:  MyFlutterApp
+   - family:  CustomIcons
      fonts:
-      - asset: fonts/MyFlutterApp.ttf
+      - asset: fonts/CustomIcons.ttf
 
   # To add assets to your application, add an assets section, like this:
   # assets:

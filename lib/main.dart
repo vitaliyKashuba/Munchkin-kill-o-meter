@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:english_words/english_words.dart';
 import 'package:flutter/rendering.dart';
-import 'package:swipedetector/swipedetector.dart';
+import 'package:badges/badges.dart';
 
-import './presentation/my_flutter_app_icons.dart';
+import './presentation/custom_icons_icons.dart';
 
 void main() {
 //  debugPaintSizeEnabled=true;
@@ -82,12 +81,10 @@ class MainWidgetState extends State<MainWidget> {
   }
 
   Widget _buildBody() {
-//    return Text('hello world1');
     return Ink(
       color: Colors.deepOrange[100],
       padding: EdgeInsets.all(20.0),
       child: Column(
-//        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           Center(
               child: Card(
@@ -99,32 +96,31 @@ class MainWidgetState extends State<MainWidget> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-//              RaisedButton(onPressed: () {},
-//              color: Colors.deepOrange,),
-              CounterCell(callback),
-              CounterCell(callback),
-              CounterCell(callback),
+              CounterCell(callback: callback, icon: Icon(CustomIcons.ring1)),
+              CounterCell(callback: callback, icon: Icon(CustomIcons.helmet)),
+              CounterCell(callback: callback, icon: Icon(CustomIcons.ring2)),
             ],
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              CounterCell(callback),
-              CounterCell(callback),
-              CounterCell(callback),
+              CounterCell(callback: callback, icon: Icon(CustomIcons.sword)),
+              CounterCell(callback: callback, icon: Icon(CustomIcons.armor)),
+              CounterCell(callback: callback, icon: Icon(CustomIcons.shield)),
             ],
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              BasicSquareCell(),
-              CounterCell(callback),
+//              BasicSquareCell(),
+              BasicSquareCell( ),
+              CounterCell(callback: callback, icon: Icon(CustomIcons.boot)),
               BasicSquareCell(
                 child: FloatingActionButton(
                   onPressed: () {
                     print("pressed");
                   },
-                  child: Icon(MyFlutterApp.skull_n_bones),
+                  child: Icon(CustomIcons.skull),
                 ),
               )
             ],
@@ -136,10 +132,10 @@ class MainWidgetState extends State<MainWidget> {
 }
 
 class CounterCell extends StatefulWidget {
-  Function(Action, [int]) callback;
-//  final snackBar = SnackBar(content: Text('Yay! A SnackBar!')); //Scaffold.of(context).showSnackBar(snackBar);
+  final Function(Action, [int]) callback;
+  final Icon icon;
 
-  CounterCell(this.callback);
+  CounterCell({this.callback, this.icon});
 
   @override
   State<StatefulWidget> createState() => new CounterCellState();
@@ -149,10 +145,7 @@ class CounterCellState extends State<CounterCell> {
   int _point = 0;
   void handleTap() {
     setState(() {
-//      print(_point);
-//      print(widget);
       widget.callback(Action.INCREASE); //call to parent
-//      print('tap');
       _point++;
     });
   }
@@ -160,7 +153,6 @@ class CounterCellState extends State<CounterCell> {
   void handleDoubleTap() {
     setState(() {
       widget.callback(Action.DECREASE);
-//      print('dtap');
       _point--;
     });
   }
@@ -168,42 +160,29 @@ class CounterCellState extends State<CounterCell> {
   void handleLongTap() {
     setState(() {
       widget.callback(Action.TO_ZERO, _point);
-//      print('longtap');
-//      print(_point);
       _point = 0;
     });
   }
 
   @override
   Widget build(BuildContext context) {
-//    return InkWell(
-////      highlightColor: Colors.deepOrangeAccent[200],
-//        onTap: _handleTap,
-//        onDoubleTap: _handleDoubleTap,
-//        onLongPress: _handleLongTap,
-//        child: Padding(
-//          padding: const EdgeInsets.all(8.0),
-//          child: Ink(
-//              width: 100,
-//              height: 100,
-//              color: Colors.deepOrange[500],
-//              child: Center(
-//                child: Text(
-//                  '$_point',
-//                  style: TextStyle(fontSize: 16.0, color: Colors.white),
-//                ),
-//              )),
-//        ));
       return BasicSquareCell(
         onTap: handleTap,
         onDoubleTap: handleDoubleTap,
         onLongTap: handleLongTap,
         color: Colors.deepOrange[400],
         child: Center(
-                child: Text(
-                  '$_point',
-                  style: TextStyle(fontSize: 16.0, color: Colors.white),
-                ),
+//                child: Text(
+//                  '$_point',
+//                  style: TextStyle(fontSize: 16.0, color: Colors.white),
+//                ),
+            child: BadgeIconButton(
+              itemCount: _point, // required
+              icon: widget.icon, // required
+              badgeColor: Colors.green, // default: Colors.red
+              badgeTextColor: Colors.white, // default: Colors.white
+              hideZeroCount: true, // default: true
+            )
               )
       );
   }
