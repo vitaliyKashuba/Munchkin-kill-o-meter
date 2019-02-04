@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:badges/badges.dart';
@@ -50,21 +52,23 @@ class MainWidget extends StatefulWidget {
   MainWidgetState createState() => new MainWidgetState();
 }
 
+int gear = 0; // TODO refactor without global var
+
 class MainWidgetState extends State<MainWidget> {
-  int total = 0;
+  int level = 1;
 
   callback(Action action, [int decreaseValue]) {
     // TODO add some validation on optional parameters ?
     setState(() {
       switch (action) {
         case Action.INCREASE:
-          total++;
+          gear++;
           break;
         case Action.DECREASE:
-          total--;
+          gear--;
           break;
         case Action.TO_ZERO:
-          total = total - decreaseValue;
+          gear = gear - decreaseValue;
           break;
       }
     });
@@ -81,48 +85,98 @@ class MainWidgetState extends State<MainWidget> {
   }
 
   Widget _buildBody() {
+    int total = gear+level;
+
     return Ink(
       color: Colors.deepOrange[100],
       padding: EdgeInsets.all(20.0),
-      child: Column(
+      child: Stack(
         children: [
-          Center(
+          Align(
+              alignment: FractionalOffset.topCenter,
               child: Card(
                   child: Padding(
-            padding:
-                const EdgeInsets.only(left: 50, top: 25, right: 50, bottom: 25),
-            child: Text("$total"),
-          ))),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              CounterCell(callback: callback, icon: Icon(CustomIcons.ring1, size: MAIN_ICON_SIZE)),
-              CounterCell(callback: callback, icon: Icon(CustomIcons.helmet, size: MAIN_ICON_SIZE)),
-              CounterCell(callback: callback, icon: Icon(CustomIcons.ring2, size: MAIN_ICON_SIZE)),
-            ],
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              CounterCell(callback: callback, icon: Icon(CustomIcons.sword, size: MAIN_ICON_SIZE)),
-              CounterCell(callback: callback, icon: Icon(CustomIcons.armor, size: MAIN_ICON_SIZE)),
-              CounterCell(callback: callback, icon: Icon(CustomIcons.shield, size: MAIN_ICON_SIZE)),
-            ],
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-//              BasicSquareCell(),
-              BasicSquareCell( ),
-              CounterCell(callback: callback, icon: Icon(CustomIcons.boot, size: MAIN_ICON_SIZE)),
-              BasicSquareCell(
-                child: FloatingActionButton(
-                  onPressed: () {
-                    print("pressed");
-                  },
-                  child: Icon(CustomIcons.skull),
-                ),
+                  padding: const EdgeInsets.only(left: 50, top: 25, right: 50, bottom: 25),
+                  child: Text("$total"),
+                  )
               )
+          ),
+          Column(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: <Widget>[
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  IconButton(
+                    icon: Icon(Icons.chevron_left),
+                    onPressed: () { setState(() { level--; }); },
+                  ),
+                  BasicSquareCell(
+                    child: Column(
+                      children: <Widget>[
+                        Text("Level"),
+                        Text("$level", style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: MAIN_ICON_SIZE
+                          )
+                        )
+                      ],
+                    ),
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.chevron_right),
+                    onPressed: () { setState(() { level++; }); },
+                  )
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  CounterCell(
+                      callback: callback,
+                      icon: Icon(CustomIcons.ring1, size: MAIN_ICON_SIZE)),
+                  CounterCell(
+                      callback: callback,
+                      icon: Icon(CustomIcons.helmet, size: MAIN_ICON_SIZE)),
+                  CounterCell(
+                      callback: callback,
+                      icon: Icon(CustomIcons.ring2, size: MAIN_ICON_SIZE)),
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  CounterCell(
+                      callback: callback,
+                      icon: Icon(CustomIcons.sword, size: MAIN_ICON_SIZE)),
+                  CounterCell(
+                      callback: callback,
+                      icon: Icon(CustomIcons.armor, size: MAIN_ICON_SIZE)),
+                  CounterCell(
+                      callback: callback,
+                      icon: Icon(CustomIcons.shield, size: MAIN_ICON_SIZE)),
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+//              BasicSquareCell(),
+                  BasicSquareCell(),
+                  CounterCell(
+                      callback: callback,
+                      icon: Icon(CustomIcons.boot, size: MAIN_ICON_SIZE)),
+                  BasicSquareCell(
+                    child: GestureDetector(
+                        onLongPress: () => setState(() {
+                              gear = 0;
+                            }),
+                        child: FloatingActionButton(
+                          onPressed: () {},
+                          child: Icon(CustomIcons.skull),
+                        )),
+                  )
+                ],
+              ),
             ],
           )
         ],
@@ -166,25 +220,19 @@ class CounterCellState extends State<CounterCell> {
 
   @override
   Widget build(BuildContext context) {
-      return BasicSquareCell(
+    return BasicSquareCell(
         onTap: handleTap,
         onDoubleTap: handleDoubleTap,
         onLongTap: handleLongTap,
         color: Colors.deepOrange[400],
         child: Center(
-//                child: Text(
-//                  '$_point',
-//                  style: TextStyle(fontSize: 16.0, color: Colors.white),
-//                ),
             child: BadgeIconButton(
-              itemCount: _point, // required
-              icon: widget.icon, // required
-              badgeColor: Colors.green, // default: Colors.red
-              badgeTextColor: Colors.white, // default: Colors.white
-              hideZeroCount: true, // default: true
-            )
-              )
-      );
+          itemCount: gear == 0 ? _point = 0 : _point, // required
+          icon: widget.icon, // required
+          badgeColor: Colors.green, // default: Colors.red
+          badgeTextColor: Colors.white, // default: Colors.white
+          hideZeroCount: true, // default: true
+        )));
   }
 }
 
@@ -193,14 +241,14 @@ class BasicSquareCell extends StatefulWidget {
   final Function() onTap, onDoubleTap, onLongTap;
   final Color color;
 
-  BasicSquareCell({this.child, this.onTap, this.onDoubleTap, this.onLongTap, this.color}) {}
+  BasicSquareCell(
+      {this.child, this.onTap, this.onDoubleTap, this.onLongTap, this.color}) {}
 
   @override
   State<StatefulWidget> createState() => new BasicSquareCellState();
 }
 
 class BasicSquareCellState extends State<BasicSquareCell> {
-
   void handleLongTap() {
     setState(() {
       print(widget);
@@ -210,7 +258,7 @@ class BasicSquareCellState extends State<BasicSquareCell> {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      highlightColor: Colors.deepOrangeAccent[200],
+        highlightColor: Colors.deepOrangeAccent[200],
         onTap: widget.onTap,
         onDoubleTap: widget.onDoubleTap,
         onLongPress: widget.onLongTap,
@@ -220,8 +268,7 @@ class BasicSquareCellState extends State<BasicSquareCell> {
               width: 80,
               height: 80,
               color: widget.color,
-              child: widget.child == null ? Container() : widget.child
-          ),
+              child: widget.child == null ? Container() : widget.child),
         ));
   }
 }
