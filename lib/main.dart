@@ -10,6 +10,7 @@ void main() {
 }
 
 enum Action { INCREASE, DECREASE, TO_ZERO }
+final double MAIN_ICON_SIZE = 36;
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
@@ -31,7 +32,6 @@ class MyApp extends StatelessWidget {
 //      ),
 //      home: MyHomePage(title: 'Flutter Demo Home Page'),
 //    );
-
     return MaterialApp(
       title: 'Munchkin kill-o-meter',
       theme: new ThemeData(
@@ -96,17 +96,17 @@ class MainWidgetState extends State<MainWidget> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              CounterCell(callback: callback, icon: Icon(CustomIcons.ring1)),
-              CounterCell(callback: callback, icon: Icon(CustomIcons.helmet)),
-              CounterCell(callback: callback, icon: Icon(CustomIcons.ring2)),
+              CounterCell(callback: callback, icon: Icon(CustomIcons.ring1, size: MAIN_ICON_SIZE)),
+              CounterCell(callback: callback, icon: Icon(CustomIcons.helmet, size: MAIN_ICON_SIZE)),
+              CounterCell(callback: callback, icon: Icon(CustomIcons.ring2, size: MAIN_ICON_SIZE)),
             ],
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              CounterCell(callback: callback, icon: Icon(CustomIcons.sword)),
-              CounterCell(callback: callback, icon: Icon(CustomIcons.armor)),
-              CounterCell(callback: callback, icon: Icon(CustomIcons.shield)),
+              CounterCell(callback: callback, icon: Icon(CustomIcons.sword, size: MAIN_ICON_SIZE)),
+              CounterCell(callback: callback, icon: Icon(CustomIcons.armor, size: MAIN_ICON_SIZE)),
+              CounterCell(callback: callback, icon: Icon(CustomIcons.shield, size: MAIN_ICON_SIZE)),
             ],
           ),
           Row(
@@ -114,7 +114,7 @@ class MainWidgetState extends State<MainWidget> {
             children: [
 //              BasicSquareCell(),
               BasicSquareCell( ),
-              CounterCell(callback: callback, icon: Icon(CustomIcons.boot)),
+              CounterCell(callback: callback, icon: Icon(CustomIcons.boot, size: MAIN_ICON_SIZE)),
               BasicSquareCell(
                 child: FloatingActionButton(
                   onPressed: () {
