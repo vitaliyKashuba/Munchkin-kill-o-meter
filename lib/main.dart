@@ -78,7 +78,7 @@ class MainWidgetState extends State<MainWidget> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              Image.asset("assets/munch.png", height: 180,),
+              Image.asset("assets/munch.png", height: 180)
             ],
           ),
           Align(
@@ -87,10 +87,9 @@ class MainWidgetState extends State<MainWidget> {
                 opacity: 0.85,
                 child: Card(
                     child: Padding(
-                    padding: const EdgeInsets.only(left: 50, top: 10, right: 50, bottom: 10),
+                    padding: const EdgeInsets.only(left: 35, top: 10, right: 35, bottom: 10),
                         child: Text("$total", style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: MAIN_ICON_SIZE
+                            fontSize: 48
                           )
                         )
                     )
@@ -105,7 +104,7 @@ class MainWidgetState extends State<MainWidget> {
                 children: <Widget>[
                   IconButton(
                     icon: Icon(Icons.chevron_left),
-                    onPressed: () { setState(() { level--; }); },
+                    onPressed: () { setState(() { if (level>1) level--; }); },
                   ),
                   BasicSquareCell(
                     child: Column(
@@ -235,11 +234,11 @@ class CounterCellState extends State<CounterCell> {
         color: Colors.deepOrange[400],
         child: Center(
             child: BadgeIconButton(
-          itemCount: gear == 0 ? _point = 0 : _point, // required
-          icon: widget.icon, // required
-          badgeColor: Colors.green, // default: Colors.red
-          badgeTextColor: Colors.white, // default: Colors.white
-          hideZeroCount: true, // default: true
+          itemCount: gear == 0 ? _point = 0 : _point, // if gear == 0 - wipe button was clicked, set 0
+          icon: widget.icon,
+          badgeColor: Colors.green,
+          badgeTextColor: Colors.white,
+          hideZeroCount: true,
         )));
   }
 }
