@@ -25,6 +25,7 @@ class MyApp extends StatelessWidget {
         primaryColor: Colors.deepOrange[600],
         accentColor: Colors.deepOrangeAccent,
         highlightColor: Colors.deepOrangeAccent[200],
+        fontFamily: 'MunchkinFonts'
       ),
       home: MainWidget(),
     );
@@ -74,13 +75,26 @@ class MainWidgetState extends State<MainWidget> {
       padding: EdgeInsets.all(20.0),
       child: Stack(
         children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Image.asset("assets/munch.png", height: 180,),
+            ],
+          ),
           Align(
               alignment: FractionalOffset.topCenter,
-              child: Card(
-                  child: Padding(
-                  padding: const EdgeInsets.only(left: 50, top: 25, right: 50, bottom: 25),
-                  child: Text("$total"),
-                  )
+              child: Opacity(
+                opacity: 0.85,
+                child: Card(
+                    child: Padding(
+                    padding: const EdgeInsets.only(left: 50, top: 10, right: 50, bottom: 10),
+                        child: Text("$total", style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: MAIN_ICON_SIZE
+                          )
+                        )
+                    )
+                ),
               )
           ),
           Column(
@@ -96,11 +110,18 @@ class MainWidgetState extends State<MainWidget> {
                   BasicSquareCell(
                     child: Column(
                       children: <Widget>[
-                        Text("Level"),
-                        Text("$level", style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: MAIN_ICON_SIZE
-                          )
+                        Padding(
+                          padding: const EdgeInsets.only(top: 10),
+                          child: Text("level", style: TextStyle(
+                            fontSize: 24,
+                          )),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(top: 10),
+                          child: Text("$level", style: TextStyle(
+                              fontSize: MAIN_ICON_SIZE,
+                            )
+                          ),
                         )
                       ],
                     ),
