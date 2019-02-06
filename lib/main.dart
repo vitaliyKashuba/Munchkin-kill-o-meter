@@ -4,8 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:badges/badges.dart';
 
-import './presentation/custom_icons_icons.dart';
 import 'shared_state.dart';
+//import 'layout_builder.dart';
+import './presentation/custom_icons_icons.dart';
+import './widgets/basic_square_cell.dart';
+import './widgets/counter_cell.dart';
 
 void main() {
 //  debugPaintSizeEnabled=true;
@@ -37,6 +40,7 @@ class MainWidget extends StatefulWidget {
 
 class MainWidgetState extends State<MainWidget> {
   int level = 1;
+  int total;
 
   /// Triggered in child (CounterCell) widgets.
   /// should be called to run setState, that why not interacting with shared state from child widgets
@@ -57,215 +61,168 @@ class MainWidgetState extends State<MainWidget> {
   }
 
   Widget _buildBody() {
-    int total = SharedState.getGear()+level;
+    total = SharedState.getGear()+level;
 
-    return Ink( // TODO refactor ? Extract widgets ?
+    return Ink(
       color: Colors.deepOrange[100],
       padding: EdgeInsets.all(20.0),
-      child: Stack(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+      child: OrientationBuilder(
+        builder: (context, orientation) {
+          return orientation == Orientation.portrait
+              ? buildVerticalLayout()
+              : buildHorizontalLayout();
+        },
+      ),
+    );
+  }
+
+  Widget buildVerticalLayout() {
+    return Stack(
+      children: [
+        buildTotalLeveCardWithImage(),
+        Column(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            buildLevelCounter(),
+            buildMainGrid()
+          ],
+        )
+      ],
+    );
+  }
+
+  buildHorizontalLayout() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Column(
+          children: <Widget>[
+            buildTotalLeveCardWithImage(),
+            buildLevelCounter()
+          ],
+        ),
+        buildMainGrid()
+      ],
+    );
+  }
+
+  /// build level card with background image
+  Widget buildTotalLeveCardWithImage() {
+    return Stack(
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Image.asset("assets/munch.png", height: 180)
+          ],
+        ),
+        Align(
+            alignment: FractionalOffset.topCenter,
+            child: Opacity(
+              opacity: 0.85,
+              child: Card(
+                  child: Padding(
+                      padding: const EdgeInsets.only(left: 35, top: 10, right: 35, bottom: 10),
+                      child: Text("$total", style: TextStyle(
+                          fontSize: 48
+                      )
+                      )
+                  )
+              ),
+            )
+        ),
+      ],
+    );
+  }
+
+  Widget buildLevelCounter() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        IconButton(
+          icon: Icon(Icons.chevron_left),
+          onPressed: () { setState(() { if (level>1) level--; }); },
+        ),
+        BasicSquareCell(
+          child: Column(
             children: <Widget>[
-              Image.asset("assets/munch.png", height: 180)
-            ],
-          ),
-          Align(
-              alignment: FractionalOffset.topCenter,
-              child: Opacity(
-                opacity: 0.85,
-                child: Card(
-                    child: Padding(
-                    padding: const EdgeInsets.only(left: 35, top: 10, right: 35, bottom: 10),
-                        child: Text("$total", style: TextStyle(
-                            fontSize: 48
-                          )
-                        )
-                    )
+              Padding(
+                padding: const EdgeInsets.only(top: 10),
+                child: Text("level", style: TextStyle(
+                  fontSize: 24,
+                )),
+              ),
+              Padding(
+                padding: EdgeInsets.only(top: 10),
+                child: Text("$level", style: TextStyle(
+                  fontSize: MAIN_ICON_SIZE,
+                )
                 ),
               )
-          ),
-          Column(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: <Widget>[
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  IconButton(
-                    icon: Icon(Icons.chevron_left),
-                    onPressed: () { setState(() { if (level>1) level--; }); },
-                  ),
-                  BasicSquareCell(
-                    child: Column(
-                      children: <Widget>[
-                        Padding(
-                          padding: const EdgeInsets.only(top: 10),
-                          child: Text("level", style: TextStyle(
-                            fontSize: 24,
-                          )),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.only(top: 10),
-                          child: Text("$level", style: TextStyle(
-                              fontSize: MAIN_ICON_SIZE,
-                            )
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                  IconButton(
-                    icon: Icon(Icons.chevron_right),
-                    onPressed: () { setState(() { level++; }); },
-                  )
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  CounterCell(
-                      callback: callback,
-                      icon: Icon(CustomIcons.ring1, size: MAIN_ICON_SIZE)),
-                  CounterCell(
-                      callback: callback,
-                      icon: Icon(CustomIcons.helmet, size: MAIN_ICON_SIZE)),
-                  CounterCell(
-                      callback: callback,
-                      icon: Icon(CustomIcons.ring2, size: MAIN_ICON_SIZE)),
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  CounterCell(
-                      callback: callback,
-                      icon: Icon(CustomIcons.sword, size: MAIN_ICON_SIZE)),
-                  CounterCell(
-                      callback: callback,
-                      icon: Icon(CustomIcons.armor, size: MAIN_ICON_SIZE)),
-                  CounterCell(
-                      callback: callback,
-                      icon: Icon(CustomIcons.shield, size: MAIN_ICON_SIZE)),
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-//              BasicSquareCell(),
-                  BasicSquareCell(),
-                  CounterCell(
-                      callback: callback,
-                      icon: Icon(CustomIcons.boot, size: MAIN_ICON_SIZE)),
-                  BasicSquareCell(
-                    child: GestureDetector(
-                        onLongPress: () => setState(() {
-                              SharedState.wipeGear();
-                            }),
-                        child: FloatingActionButton(
-                          onPressed: () {},
-                          child: Icon(CustomIcons.skull),
-                        )),
-                  )
-                ],
-              ),
             ],
-          )
-        ],
-      ),
+          ),
+        ),
+        IconButton(
+          icon: Icon(Icons.chevron_right),
+          onPressed: () { setState(() { level++; }); },
+        )
+      ],
+    );
+  }
+
+  Widget buildMainGrid() {
+    return Column(
+      children: <Widget>[
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            CounterCell(
+                callback: callback,
+                icon: Icon(CustomIcons.ring1, size: MAIN_ICON_SIZE)),
+            CounterCell(
+                callback: callback,
+                icon: Icon(CustomIcons.helmet, size: MAIN_ICON_SIZE)),
+            CounterCell(
+                callback: callback,
+                icon: Icon(CustomIcons.ring2, size: MAIN_ICON_SIZE)),
+          ],
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            CounterCell(
+                callback: callback,
+                icon: Icon(CustomIcons.sword, size: MAIN_ICON_SIZE)),
+            CounterCell(
+                callback: callback,
+                icon: Icon(CustomIcons.armor, size: MAIN_ICON_SIZE)),
+            CounterCell(
+                callback: callback,
+                icon: Icon(CustomIcons.shield, size: MAIN_ICON_SIZE)),
+          ],
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+//              BasicSquareCell(),
+            BasicSquareCell(),
+            CounterCell(
+                callback: callback,
+                icon: Icon(CustomIcons.boot, size: MAIN_ICON_SIZE)),
+            BasicSquareCell(
+              child: GestureDetector(
+                  onLongPress: () => setState(() {
+                    SharedState.wipeGear();
+                  }),
+                  child: FloatingActionButton(
+                    onPressed: () {},
+                    child: Icon(CustomIcons.skull),
+                  )),
+            )
+          ],
+        ),
+      ],
     );
   }
 }
 
-/// Cell to count gear.
-/// [callback] callback from parent widget, triggered at tap.
-/// [icon] gear icon.
-class CounterCell extends StatefulWidget {
-  final Function(Action, [int]) callback;
-  final Icon icon;
-
-  CounterCell({this.callback, this.icon});
-
-  @override
-  State<StatefulWidget> createState() => new CounterCellState();
-}
-
-class CounterCellState extends State<CounterCell> {
-  int _point = 0;
-  void handleTap() {
-    setState(() {
-      widget.callback(Action.INCREASE); //call to parent
-      _point++;
-    });
-  }
-
-  void handleDoubleTap() {
-    setState(() {
-      if (_point > 0) {
-        widget.callback(Action.DECREASE);
-        _point--;
-      }
-    });
-  }
-
-  void handleLongTap() {
-    setState(() {
-      widget.callback(Action.TO_ZERO, _point);
-      _point = 0;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return BasicSquareCell(
-        onTap: handleTap,
-        onDoubleTap: handleDoubleTap,
-        onLongTap: handleLongTap,
-        color: Colors.deepOrange[400],
-        child: Center(
-            child: BadgeIconButton(
-          itemCount: SharedState.getGear() == 0 ? _point = 0 : _point, // if gear == 0 - wipe button was clicked, set 0
-          icon: widget.icon,
-          badgeColor: Colors.green,
-          badgeTextColor: Colors.white,
-          hideZeroCount: true,
-        )));
-  }
-}
-
-/// Used to wrap content, that should be aligned as Counter cells
-class BasicSquareCell extends StatefulWidget {
-  final Widget child;
-  final Function() onTap, onDoubleTap, onLongTap;
-  final Color color;
-
-  BasicSquareCell(
-      {this.child, this.onTap, this.onDoubleTap, this.onLongTap, this.color}) {}
-
-  @override
-  State<StatefulWidget> createState() => new BasicSquareCellState();
-}
-
-class BasicSquareCellState extends State<BasicSquareCell> {
-  void handleLongTap() {
-    setState(() {
-      print(widget);
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-        highlightColor: Colors.deepOrangeAccent[200],
-        onTap: widget.onTap,
-        onDoubleTap: widget.onDoubleTap,
-        onLongPress: widget.onLongTap,
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Ink(
-              width: 80,
-              height: 80,
-              color: widget.color,
-              child: widget.child == null ? Container() : widget.child),
-        ));
-  }
-}
