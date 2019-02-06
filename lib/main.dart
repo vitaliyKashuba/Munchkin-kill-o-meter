@@ -5,16 +5,14 @@ import 'package:flutter/rendering.dart';
 import 'package:badges/badges.dart';
 
 import './presentation/custom_icons_icons.dart';
+import 'shared_state.dart';
 
 void main() {
 //  debugPaintSizeEnabled=true;
   runApp(MyApp());
 }
 
-enum Action { INCREASE, DECREASE, TO_ZERO }
 final double MAIN_ICON_SIZE = 36;
-
-int gear = 0; // TODO refactor without global var ?
 
 class MyApp extends StatelessWidget {
   @override
@@ -40,20 +38,11 @@ class MainWidget extends StatefulWidget {
 class MainWidgetState extends State<MainWidget> {
   int level = 1;
 
-  /// Triggered in child (CounterCell) widgets. used to change both cell and total count values
+  /// Triggered in child (CounterCell) widgets.
+  /// should be called to run setState, that why not interacting with shared state from child widgets
   callback(Action action, [int decreaseValue]) {
     setState(() {
-      switch (action) {
-        case Action.INCREASE:
-          gear++;
-          break;
-        case Action.DECREASE:
-          gear--;
-          break;
-        case Action.TO_ZERO:
-          gear = gear - decreaseValue;
-          break;
-      }
+      SharedState.changeGear(action, decreaseValue);
     });
   }
 
@@ -68,7 +57,7 @@ class MainWidgetState extends State<MainWidget> {
   }
 
   Widget _buildBody() {
-    int total = gear+level;
+    int total = SharedState.getGear()+level;
 
     return Ink( // TODO refactor ? Extract widgets ?
       color: Colors.deepOrange[100],
@@ -170,7 +159,7 @@ class MainWidgetState extends State<MainWidget> {
                   BasicSquareCell(
                     child: GestureDetector(
                         onLongPress: () => setState(() {
-                              gear = 0;
+                              SharedState.wipeGear();
                             }),
                         child: FloatingActionButton(
                           onPressed: () {},
@@ -234,7 +223,7 @@ class CounterCellState extends State<CounterCell> {
         color: Colors.deepOrange[400],
         child: Center(
             child: BadgeIconButton(
-          itemCount: gear == 0 ? _point = 0 : _point, // if gear == 0 - wipe button was clicked, set 0
+          itemCount: SharedState.getGear() == 0 ? _point = 0 : _point, // if gear == 0 - wipe button was clicked, set 0
           icon: widget.icon,
           badgeColor: Colors.green,
           badgeTextColor: Colors.white,
