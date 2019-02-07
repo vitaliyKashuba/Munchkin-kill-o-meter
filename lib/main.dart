@@ -1,11 +1,13 @@
 import 'dart:async';
+import 'dart:math';
+import 'dart:core';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:badges/badges.dart';
 
 import 'shared_state.dart';
-//import 'layout_builder.dart';
+import 'layout_util.dart';
 import './presentation/custom_icons_icons.dart';
 import './widgets/basic_square_cell.dart';
 import './widgets/counter_cell.dart';
@@ -52,38 +54,41 @@ class MainWidgetState extends State<MainWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Munchkin kill-o-meter'),
-      ),
-      body: _buildBody(),
+    print(MediaQuery.of(context).size);
+    total = SharedState.getGear()+level;
+
+    return OrientationBuilder(
+      builder: (context, orientation) {
+        return Scaffold(
+            appBar: orientation == Orientation.portrait ? buildAppBar() : null,
+            body: Ink(
+                color: Colors.deepOrange[100],
+                padding: EdgeInsets.all(20.0),
+                child: orientation == Orientation.portrait
+                    ? buildVerticalLayout()
+                    : buildHorizontalLayout()
+            )
+        );
+      },
     );
   }
 
-  Widget _buildBody() {
-    total = SharedState.getGear()+level;
-
-    return Ink(
-      color: Colors.deepOrange[100],
-      padding: EdgeInsets.all(20.0),
-      child: OrientationBuilder(
-        builder: (context, orientation) {
-          return orientation == Orientation.portrait
-              ? buildVerticalLayout()
-              : buildHorizontalLayout();
-        },
-      ),
+  Widget buildAppBar() {
+    return AppBar(
+      title: Text('Munchkin kill-o-meter'),
     );
   }
 
   Widget buildVerticalLayout() {
     return Stack(
       children: [
-        buildTotalLeveCardWithImage(),
+        Align(
+            alignment: Alignment.topCenter,
+            child: buildTotalLeveCardWithImage()
+        ),
         Column(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            buildLevelCounter(),
             buildMainGrid()
           ],
         )
@@ -95,12 +100,7 @@ class MainWidgetState extends State<MainWidget> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Column(
-          children: <Widget>[
-            buildTotalLeveCardWithImage(),
-            buildLevelCounter()
-          ],
-        ),
+        buildTotalLeveCardWithImage(),
         buildMainGrid()
       ],
     );
@@ -108,30 +108,55 @@ class MainWidgetState extends State<MainWidget> {
 
   /// build level card with background image
   Widget buildTotalLeveCardWithImage() {
-    return Stack(
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Image.asset("assets/munch.png", height: 180)
-          ],
-        ),
-        Align(
-            alignment: FractionalOffset.topCenter,
-            child: Opacity(
-              opacity: 0.85,
-              child: Card(
-                  child: Padding(
-                      padding: const EdgeInsets.only(left: 35, top: 10, right: 35, bottom: 10),
-                      child: Text("$total", style: TextStyle(
-                          fontSize: 48
-                      )
-                      )
-                  )
+    double width = MediaQuery.of(context).size.width;
+    double height = MediaQuery.of(context).size.height;
+
+    double screenRatio = max(height/width, width/height);
+    double containerSize = min(width, height) / ((screenRatio*2).floor() - screenRatio) - 60;
+
+    double btns = max(height, width) - (((90 + 12) * 3) + 80);
+
+    containerSize = btns;
+
+    print('screen ratio: $screenRatio');
+    print((screenRatio*2).floor() - screenRatio);
+    print('cont size: $containerSize');
+
+    print(MediaQuery.of(context).size);
+
+    print('btns size: $btns');
+
+    return Container(
+        width: containerSize,
+        height: containerSize,
+        child: Stack(
+            children: [
+              Align(
+                  alignment: Alignment.topCenter,
+                  child: Image.asset("assets/munch.png", width: containerSize - MAIN_ICON_SIZE/2,)
               ),
-            )
-        ),
-      ],
+              Align(
+                alignment: Alignment.topCenter,
+                child: Opacity(
+                  opacity: 0.85,
+                  child: Card(
+                      child: Padding(
+                          padding: const EdgeInsets.only(
+                              left: 35, top: 10, right: 35, bottom: 10),
+                          child: Text("$total", style: TextStyle(
+                              fontSize: 48
+                          )
+                          )
+                      )
+                  ),
+                ),
+              ),
+              Align(
+                  alignment: Alignment.bottomCenter,
+                child: buildLevelCounter()
+              )
+            ]
+        )
     );
   }
 
@@ -172,6 +197,7 @@ class MainWidgetState extends State<MainWidget> {
 
   Widget buildMainGrid() {
     return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
