@@ -54,7 +54,6 @@ class MainWidgetState extends State<MainWidget> {
 
   @override
   Widget build(BuildContext context) {
-    print(MediaQuery.of(context).size);
     total = SharedState.getGear()+level;
 
     return OrientationBuilder(
@@ -63,7 +62,7 @@ class MainWidgetState extends State<MainWidget> {
             appBar: orientation == Orientation.portrait ? buildAppBar() : null,
             body: Ink(
                 color: Colors.deepOrange[100],
-                padding: EdgeInsets.all(20.0),
+                padding: EdgeInsets.all(LayoutUtil.getMainPadding()),
                 child: orientation == Orientation.portrait
                     ? buildVerticalLayout()
                     : buildHorizontalLayout()
@@ -108,23 +107,7 @@ class MainWidgetState extends State<MainWidget> {
 
   /// build level card with background image
   Widget buildTotalLeveCardWithImage() {
-    double width = MediaQuery.of(context).size.width;
-    double height = MediaQuery.of(context).size.height;
-
-    double screenRatio = max(height/width, width/height);
-    double containerSize = min(width, height) / ((screenRatio*2).floor() - screenRatio) - 60;
-
-    double btns = max(height, width) - (((90 + 12) * 3) + 80);
-
-    containerSize = btns;
-
-    print('screen ratio: $screenRatio');
-    print((screenRatio*2).floor() - screenRatio);
-    print('cont size: $containerSize');
-
-    print(MediaQuery.of(context).size);
-
-    print('btns size: $btns');
+    double containerSize = LayoutUtil.calculateTabSize(context);
 
     return Container(
         width: containerSize,

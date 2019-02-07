@@ -5,6 +5,10 @@ import 'package:flutter/rendering.dart';
 
 import '../layout_util.dart';
 
+const double _padding = 6;
+const double _maxSize = 90;
+const double _minSize = 70;
+
 /// Used to wrap content, that should be aligned as Counter cells
 class BasicSquareCell extends StatefulWidget {
   final Widget child;
@@ -13,6 +17,8 @@ class BasicSquareCell extends StatefulWidget {
 
   BasicSquareCell(
       {this.child, this.onTap, this.onDoubleTap, this.onLongTap, this.color}) {}
+
+  static double getMaxCellSize() => _maxSize + _padding * 2;
 
   @override
   State<StatefulWidget> createState() => new BasicSquareCellState();
@@ -27,15 +33,12 @@ class BasicSquareCellState extends State<BasicSquareCell> {
 
   @override
   Widget build(BuildContext context) {
-    const double padding = 6;
     double cellSize = min(MediaQuery.of(context).size.width,
-                          MediaQuery.of(context).size.height) / 3 - (padding * 3);
-
-//    print('cell size: $cellSize');
+                          MediaQuery.of(context).size.height) / 3 - (_padding * 3);
 
     return ConstrainedBox(
       constraints: const BoxConstraints(
-        maxWidth: 90, maxHeight: 90, minHeight: 70, minWidth: 70
+        maxWidth: _maxSize, maxHeight: _maxSize, minHeight: _minSize, minWidth: _minSize
       ),
       child: InkWell(
           highlightColor: Colors.deepOrangeAccent[200],
@@ -43,7 +46,7 @@ class BasicSquareCellState extends State<BasicSquareCell> {
           onDoubleTap: widget.onDoubleTap,
           onLongPress: widget.onLongTap,
           child: Padding(
-            padding: const EdgeInsets.all(padding),
+            padding: const EdgeInsets.all(_padding),
             child: Ink(
               width: cellSize,
               height: cellSize,
