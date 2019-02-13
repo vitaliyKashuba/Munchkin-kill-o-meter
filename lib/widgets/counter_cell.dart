@@ -6,22 +6,24 @@ import '../shared_state.dart';
 
 /// Cell to count gear.
 /// [callback] callback from parent widget, triggered at tap.
-/// [icon] gear icon.
+/// [icon] gear icon. ! must be unique // TODO add unique check ?
 class CounterCell extends StatefulWidget {
-  final Function(Action, [int]) callback;
+  final Function(Action, int, [int]) callback;
   final Icon icon;
+  final int cellId ;
 
-  CounterCell({this.callback, this.icon});
+  CounterCell({this.callback, this.icon}) : cellId = icon.icon.codePoint;
 
   @override
   State<StatefulWidget> createState() => new CounterCellState();
 }
 
 class CounterCellState extends State<CounterCell> {
-  int _point = 0;
+  int _point ;
+
   void handleTap() {
     setState(() {
-      widget.callback(Action.INCREASE); //call to parent
+      widget.callback(Action.INCREASE, widget.cellId); //call to parent
       _point++;
     });
   }
@@ -29,7 +31,7 @@ class CounterCellState extends State<CounterCell> {
   void handleDoubleTap() {
     setState(() {
       if (_point > 0) {
-        widget.callback(Action.DECREASE);
+        widget.callback(Action.DECREASE, widget.cellId);
         _point--;
       }
     });
@@ -37,13 +39,14 @@ class CounterCellState extends State<CounterCell> {
 
   void handleLongTap() {
     setState(() {
-      widget.callback(Action.TO_ZERO, _point);
+      widget.callback(Action.TO_ZERO, widget.cellId, _point);
       _point = 0;
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    this._point = SharedState.getCellValue(widget.cellId);
     return BasicSquareCell(
         onTap: handleTap,
         onDoubleTap: handleDoubleTap,
