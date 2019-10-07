@@ -14,6 +14,8 @@ dependencies:
   english_words: ^3.1.0
   swipedetector: ^1.2.0
   badges: ^0.0.6
+  firebase_core: ^0.4.0+1
+  firebase_analytics: ^4.0.2
 
 dev_dependencies:
   flutter_launcher_icons: "^0.7.0"

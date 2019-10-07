@@ -46,10 +46,17 @@ class MainWidgetState extends State<MainWidget> {
 
   /// Triggered in child (CounterCell) widgets.
   /// should be called to run setState, that why not interacting with shared state from child widgets
-  callback(Action action, int cellId, [int decreaseValue]) {
+  callback(ActionsCustom action, int cellId, [int decreaseValue]) {
     setState(() {
       SharedState.changeGear(action, cellId, decreaseValue);
     });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+//    Ads.init('ca-app-pub-3940256099942544~3347511713', testing: true);
   }
 
   @override

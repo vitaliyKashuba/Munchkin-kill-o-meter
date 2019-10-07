@@ -1,4 +1,4 @@
-enum Action { INCREASE, DECREASE, TO_ZERO }
+enum ActionsCustom { INCREASE, DECREASE, TO_ZERO }
 
 /// store gear value, that may be accessed from widgets of different level of parenthesis
 /// replacing of global var in main.dart
@@ -11,17 +11,17 @@ class SharedState {
     return gear;
   }
 
-  static void changeGear(Action action, int cellId, [int decreaseValue]) {
+  static void changeGear(ActionsCustom action, int cellId, [int decreaseValue]) {
     switch (action) {
-      case Action.INCREASE:
+      case ActionsCustom.INCREASE:
         cellValues.update(cellId, (dynamic val) => ++val);
         gear++;
         break;
-      case Action.DECREASE:
+      case ActionsCustom.DECREASE:
         cellValues[cellId]--;
         gear--;
         break;
-      case Action.TO_ZERO:
+      case ActionsCustom.TO_ZERO:
         cellValues[cellId]=0;
         gear = gear - decreaseValue;
         break;

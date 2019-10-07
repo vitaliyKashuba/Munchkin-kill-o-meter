@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "741764766253",
+    "firebase_url": "https://munchkin-killometer.firebaseio.com",
+    "project_id": "munchkin-killometer",
+    "storage_bucket": "munchkin-killometer.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:741764766253:android:76abed7e7e6330284576a4",
+        "android_client_info": {
+          "package_name": "vitaliy94.munchkinkillometer"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "741764766253-gvt8930c3h8b9jqhc41lgnvgli3c8pn7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAZzRhSpdOxMyDDSfeLd26eBr2ycPWaPC0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "741764766253-gvt8930c3h8b9jqhc41lgnvgli3c8pn7.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

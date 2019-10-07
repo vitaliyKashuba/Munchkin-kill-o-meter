@@ -8,7 +8,7 @@ import '../shared_state.dart';
 /// [callback] callback from parent widget, triggered at tap.
 /// [icon] gear icon. ! must be unique // TODO add unique check ?
 class CounterCell extends StatefulWidget {
-  final Function(Action, int, [int]) callback;
+  final Function(ActionsCustom, int, [int]) callback;
   final Icon icon;
   final int cellId ;
 
@@ -23,7 +23,7 @@ class CounterCellState extends State<CounterCell> {
 
   void handleTap() {
     setState(() {
-      widget.callback(Action.INCREASE, widget.cellId); //call to parent
+      widget.callback(ActionsCustom.INCREASE, widget.cellId); //call to parent
       _point++;
     });
   }
@@ -31,7 +31,7 @@ class CounterCellState extends State<CounterCell> {
   void handleDoubleTap() {
     setState(() {
       if (_point > 0) {
-        widget.callback(Action.DECREASE, widget.cellId);
+        widget.callback(ActionsCustom.DECREASE, widget.cellId);
         _point--;
       }
     });
@@ -39,7 +39,7 @@ class CounterCellState extends State<CounterCell> {
 
   void handleLongTap() {
     setState(() {
-      widget.callback(Action.TO_ZERO, widget.cellId, _point);
+      widget.callback(ActionsCustom.TO_ZERO, widget.cellId, _point);
       _point = 0;
     });
   }
