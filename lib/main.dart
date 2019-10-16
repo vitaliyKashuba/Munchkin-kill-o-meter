@@ -1,10 +1,13 @@
 import 'dart:async';
 import 'dart:math';
 import 'dart:core';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:badges/badges.dart';
+import 'package:ads/ads.dart';
+import 'package:firebase_admob/firebase_admob.dart';
 
 import 'shared_state.dart';
 import 'layout_util.dart';
@@ -52,16 +55,42 @@ class MainWidgetState extends State<MainWidget> {
     });
   }
 
+  Ads ads;
+
   @override
   void initState() {
     super.initState();
 
 //    Ads.init('ca-app-pub-3940256099942544~3347511713', testing: true);
+    final String appId = 'ca-app-pub-3940256099942544~3347511713';
+    final String bannerUnitId = 'ca-app-pub-3940256099942544/6300978111';
+
+    /// Assign a listener.
+    var eventListener = (MobileAdEvent event) {
+      if (event == MobileAdEvent.clicked) {
+        print("The opened ad is clicked on.");
+      }
+    };
+
+    ads = Ads(
+      appId,
+      bannerUnitId: bannerUnitId,
+//      screenUnitId: screenUnitId,
+//      videoUnitId: videoUnitId,
+      keywords: <String>['ibm', 'computers'],
+      contentUrl: 'http://www.ibm.com',
+      childDirected: false,
+      testDevices: ['Samsung_Galaxy_SII_API_26:5554'],
+      testing: true,
+      listener: eventListener,
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     total = SharedState.getGear()+level;
+
+    ads.showBannerAd(state: this, anchorOffset: null);
 
     return OrientationBuilder(
       builder: (context, orientation) {
